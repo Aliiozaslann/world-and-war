@@ -11,21 +11,24 @@
     <meta name="keywords" content="askeri güç sıralaması, global military db, taktik harp simülatörü, askeri envanter, tsk envanteri, savunma sanayii, wargame, lanchester motoru">
     <meta name="author" content="World and War Team">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://worldandwar.tr/">
+    <link rel="canonical" href="https://worldandwar.com.tr/">
+
+    <!-- Favicon / Tarayıcı Sekme Logosu -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><path fill=%22%23f59e0b%22 d=%22M352 256c0 22.2-1.2 43.6-3.3 64H163.3c-2.1-20.4-3.3-41.8-3.3-64s1.2-43.6 3.3-64h185.4c2.1 20.4 3.3 41.8 3.3 64zm28.8-128H439c-19-36.3-48.4-65.7-84.7-84.7j-35.7 84.7zM302 128H210c-14.5 45.4-22 93.9-22 128s7.5 82.6 22 128h92c14.5-45.4 22-93.9 22-128s-7.5-82.6-22-128zM128 256c0-34.1 7.5-82.6 22-128H58.5C22.2 147.3-7.2 176.7-26.2 213h86.5c2.1 20.4 3.3 41.8 3.3 64s-1.2 43.6-3.3 64H59.5c19 36.3 48.4 65.7 84.7 84.7h91.5c-14.5-45.4-22-93.9-22-128zm25.5 128H358.5c19 36.3 48.4 65.7 84.7 84.7l35.7-84.7h60.5c-36.3 19-65.7 48.4-84.7 84.7h-91.5c14.5 45.4 22 93.9 22 128zm149-256l35.7-84.7C489.3 147.3 518.7 176.7 537.7 213h-60.5c-19-36.3-48.4-65.7-84.7-84.7z%22/></svg>">
 
     <!-- Open Graph / Facebook / LinkedIn (Sosyal Medya Paylaşım Kartları) -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://worldandwar.tr/">
+    <meta property="og:url" content="https://worldandwar.com.tr/">
     <meta property="og:title" content="World and War - Küresel Askeri Güç Veritabanı & Taktik Harp Simülatörü">
     <meta property="og:description" content="Dünya ülkelerinin askeri gücünü karşılaştırın, coğrafi sınır matrisleri ve Lanchester yıpranma denklemleriyle taktik harp senaryolarını simüle edin.">
-    <meta property="og:image" content="https://worldandwar.tr/assets/preview-banner.jpg">
+    <meta property="og:image" content="https://worldandwar.com.tr/assets/preview-banner.jpg">
 
     <!-- Twitter Card (Twitter / X Paylaşım Kartları) -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://worldandwar.tr/">
+    <meta property="twitter:url" content="https://worldandwar.com.tr/">
     <meta property="twitter:title" content="World and War - Küresel Askeri Güç Veritabanı & Taktik Harp Simülatörü">
     <meta property="twitter:description" content="Dünya ülkelerinin askeri gücünü karşılaştırın, coğrafi sınır matrisleri ve Lanchester yıpranma denklemleriyle taktik harp senaryolarını simüle edin.">
-    <meta property="twitter:image" content="https://worldandwar.tr/assets/preview-banner.jpg">
+    <meta property="twitter:image" content="https://worldandwar.com.tr/assets/preview-banner.jpg">
 
     <!-- Harici Kütüphaneler ve Fontlar -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -685,7 +688,7 @@
 
         if (!hasLandBorder(id1, id2)) {
             if (warnBox) warnBox.classList.remove('hidden');
-            if (warnText) warnText.innerText = `[${c1 ? c1.name : ''}] ile [${c2 ? c2.name : ''}] arasında doğrudan kara sınırı bulunmuyor! Konvansiyonel Sınır Taarruzu yerine Deniz Aşırı Çıkarma veya Uzun Menzilli Taarruz doktrini devreye girer.`;
+            if (warnText) warnText.innerText = `[${c1 ? c1.name : ''}] ile [${c2 ? c2.name : ''}] arasında doğrudan kara sınırı bulunmuyor! Konvansiyonel Sınır Taarruzu yerine Deniz Aşırı İntikal veya Uzun Menzilli Füze Taarruzu devreye girer.`;
 
             if (radioBorder) radioBorder.disabled = true;
             if (optBorderLabel) optBorderLabel.classList.add('opacity-40', 'cursor-not-allowed');
