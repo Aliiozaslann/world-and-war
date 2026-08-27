@@ -95,20 +95,7 @@
 </header>
 
 <!-- 3D İNTERAKTİF DÜNYA KÜRESİ ALANI -->
-<section id="globe-section">
-    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none w-full px-4">
-        <span class="inline-flex items-center space-x-2 bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase backdrop-blur-md shadow-lg">
-            <i class="fa-solid fa-crosshairs text-amber-400 animate-pulse"></i>
-            <span>3D Taktiksel Küre & Askeri İstihbarat Haritası</span>
-        </span>
-        <p class="text-slate-400 text-xs mt-1.5 hidden sm:block">Küre üzerinden ülkelere tıklayarak doğrudan envanter ve savunma analizini görüntüleyin</p>
-    </div>
-    <div id="globeViz" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
-</section>
-
-<!-- Main Grid -->
-<main class="flex-1 w-full px-4 sm:px-6 py-4 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-
+<section id="overview-section" class="overview-layout">
     <!-- Sol Panel: Sıralama -->
     <section class="lg:col-span-4 xl:col-span-3 bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4 sm:p-5 h-[420px] lg:h-[calc(100vh-112px)] flex flex-col shadow-2xl backdrop-blur-sm">
         <div class="mb-3 sm:mb-4">
@@ -126,8 +113,23 @@
         <div id="countryList" class="flex-1 overflow-y-auto space-y-2 pr-1.5"></div>
     </section>
 
+<section id="globe-section">
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none w-full px-4">
+        <span class="inline-flex items-center space-x-2 bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase backdrop-blur-md shadow-lg">
+            <i class="fa-solid fa-crosshairs text-amber-400 animate-pulse"></i>
+            <span>3D Taktiksel Küre & Askeri İstihbarat Haritası</span>
+        </span>
+        <p class="text-slate-400 text-xs mt-1.5 hidden sm:block">Küre üzerinden ülkelere tıklayarak doğrudan envanter ve savunma analizini görüntüleyin</p>
+    </div>
+    <div id="globeViz" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+</section>
+</section>
+
+<!-- Main Grid: selected nation detail -->
+<main class="flex-1 w-full px-4 sm:px-6 py-4 sm:py-6 grid grid-cols-1 gap-6 items-start">
+
     <!-- Sağ Panel -->
-    <section id="detailSection" class="lg:col-span-8 xl:col-span-9 bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4 sm:p-6 lg:p-8 overflow-y-auto min-h-[600px] lg:h-[calc(100vh-112px)] shadow-2xl backdrop-blur-sm pr-2 flex flex-col">
+    <section id="detailSection" class="w-full bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4 sm:p-6 lg:p-8 overflow-y-auto min-h-[600px] lg:h-[calc(100vh-112px)] shadow-2xl backdrop-blur-sm pr-2 flex flex-col">
 
         <!-- Tekil Görünüm -->
         <div id="singleView" class="flex-1 flex flex-col">
@@ -823,7 +825,7 @@
 
         // Küreyi yavaşça otomatik döndür
         worldGlobe.controls().autoRotate = true;
-        worldGlobe.controls().autoRotateSpeed = 0.5;
+        worldGlobe.controls().autoRotateSpeed = 0.15;
 
         // Pencere boyutu değişince küreyi güncelle
         window.addEventListener('resize', () => {

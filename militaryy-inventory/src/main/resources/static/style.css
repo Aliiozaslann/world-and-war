@@ -224,3 +224,11 @@
     font-weight: 700;
     font-size: 0.8rem;
 }
+
+/* Full-source layout patch: vertical ranking beside a complete, slow rotating globe. */
+#overview-section.overview-layout { display:grid; grid-template-columns:minmax(280px, 330px) minmax(0, 1fr); gap:24px; align-items:stretch; padding:0 1rem 1.5rem; }
+#overview-section.overview-layout #globe-section { min-width:0; height:560px; border:1px solid rgba(51,65,85,.8); border-radius:1rem; }
+#overview-section.overview-layout > section:first-child { height:560px; max-height:none; }
+#overview-section.overview-layout #globeViz { height:100%; }
+@media (max-width:1023px) { #overview-section.overview-layout { grid-template-columns:1fr; } #overview-section.overview-layout > section:first-child, #overview-section.overview-layout #globe-section { height:440px; } }
+@media (max-width:640px) { #overview-section.overview-layout { padding:0 .75rem 1rem; gap:14px; } #overview-section.overview-layout > section:first-child { height:390px; } #overview-section.overview-layout #globe-section { height:360px; } }

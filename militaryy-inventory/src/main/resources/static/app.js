@@ -154,7 +154,8 @@ function init3DGlobe() {
         .catch(err => console.warn("Globe GeoJSON yüklenemedi:", err));
 
     worldGlobe.controls().autoRotate = true;
-    worldGlobe.controls().autoRotateSpeed = 0.6;
+    worldGlobe.controls().autoRotateSpeed = 0.15;
+    worldGlobe.pointOfView({ lat: 20, lng: 0, altitude: 2.15 }, 0);
 
     window.addEventListener('resize', () => {
         if (worldGlobe && elem) {
