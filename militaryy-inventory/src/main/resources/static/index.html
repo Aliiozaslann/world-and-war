@@ -139,7 +139,12 @@
 @keyframes aircraft-from-target { 0% { transform:scaleX(-1) translate(0,0) rotate(7deg); opacity:0; } 14% { opacity:1; } 100% { transform:scaleX(-1) translate(31vw,-11vh) rotate(-2deg); opacity:1; } }
 @keyframes shot-right { 0% { clip-path:inset(0 100% 0 0); opacity:0; } 14% { opacity:1; } 100% { clip-path:inset(0 0 0 0); opacity:1; } }
 @keyframes shot-left { 0% { clip-path:inset(0 100% 0 0); opacity:0; } 14% { opacity:1; } 100% { clip-path:inset(0 0 0 0); opacity:1; } }
-@media (max-width:640px) { .conventional-world .world-disc { width:76vw; }.battle-target.usa { left:7%; }.battle-target.turkey { right:7%; }.battle-aircraft { font-size:18px; }.battle-route-label { top:77%; font-size:8px; }.conventional-world .world-disc:before,.conventional-world .world-disc:after { display:none; } }
+.battle-world.conventional-world { overflow:hidden; }
+.battle-globe-real { position:absolute; inset:54px 0 0; z-index:1; display:flex; align-items:center; justify-content:center; }
+.battle-globe-real canvas { display:block; width:100%!important; height:100%!important; }
+.battle-globe-real:after { content:"LIVE GEOSPATIAL THEATER / SELECTED BORDERS IN RED"; position:absolute; left:50%; bottom:18px; transform:translateX(-50%); padding:7px 11px; color:#fecaca; border:1px solid rgba(239,68,68,.48); background:rgba(20,25,29,.7); font:700 9px ui-monospace,monospace; letter-spacing:.12em; white-space:nowrap; }
+.battle-aircraft { pointer-events:none; }
+@media (max-width:640px) { .conventional-world .world-disc { width:76vw; }.battle-target.usa { left:7%; }.battle-target.turkey { right:7%; }.battle-aircraft { font-size:18px; }.battle-route-label { top:77%; font-size:8px; }.conventional-world .world-disc:before,.conventional-world .world-disc:after { display:none; }.battle-globe-real { inset:54px -10% 0; }.battle-globe-real:after { bottom:10px; font-size:7px; } }
 </style>
 <style>
 /* Wireframe layout revision: left vertical nations rail, right globe and selected-country workspace. */
@@ -2182,29 +2187,125 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
   <script>
     /* Full-screen tactical simulation: abstract visualization only. */
     let tacticalTimer = null;
-    function populateTacticalSelects() {
-      const attacker = document.getElementById('simAttacker'); const defender = document.getElementById('simDefender');
-      if (!attacker || !defender || !Array.isArray(allCountries) || !allCountries.length) return;
-      const options = allCountries.map((country) => `<option value="${country.id}">#${country.rank} — ${country.name}</option>`).join('');
-      attacker.innerHTML = options; defender.innerHTML = options;
-      const turkey = allCountries.find((country) => country.id === 'turkey'); const usa = allCountries.find((country) => country.id === 'usa');
-      if (usa) attacker.value = usa.id; if (turkey) defender.value = turkey.id;
-      if (attacker.value === defender.value && allCountries[1]) defender.value = allCountries[1].id;
+    let battleGlobe = null;
+    let battleGeoFeatures = [];
+    let battleArcTimer = null;
+    const fallbackBattlePoints = { usa: { lat: 38.9, lng: -99.2 }, turkey: { lat: 39.0, lng: 35.2 } };
+
+    function battleFeaturePoint(country) {
+      const target = battleGeoFeatures.find(feature => {
+        const props = feature.properties || {};
+        const iso = String(props.ISO_A2 || '').toLowerCase();
+        const name = String(props.NAME || '').toLowerCase();
+        return (country.id === 'usa' && iso === 'us') || (country.id === 'turkey' && iso === 'tr') || name === String(country.name || '').toLowerCase();
+      });
+      if (target) {
+        const coords = target.geometry?.coordinates || [];
+        const flat = [];
+        const collect = value => Array.isArray(value) && typeof value[0] === 'number' ? flat.push(value) : Array.isArray(value) && value.forEach(collect);
+        collect(coords);
+        if (flat.length) return { lat: flat.reduce((sum, point) => sum + point[1], 0) / flat.length, lng: flat.reduce((sum, point) => sum + point[0], 0) / flat.length };
+      }
+      return fallbackBattlePoints[country.id] || { lat: 0, lng: 0 };
     }
-    function openScenarioModal() { document.body.classList.add('simulation-selection'); populateTacticalSelects(); const overlay = document.getElementById('simChoiceOverlay'); overlay.classList.add('is-open'); overlay.setAttribute('aria-hidden','false'); }
-    function closeScenarioModal() { document.body.classList.remove('simulation-selection'); const overlay = document.getElementById('simChoiceOverlay'); if (overlay) { overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); } }
+
+    function destroyBattleGlobe() {
+      clearTimeout(battleArcTimer);
+      if (battleGlobe) {
+        const elem = document.getElementById('battleGlobeViz');
+        if (elem) elem.replaceChildren();
+      }
+      battleGlobe = null;
+      battleGeoFeatures = [];
+    }
+
+    function initBattleGlobe(attacker, defender) {
+      const elem = document.getElementById('battleGlobeViz');
+      if (!elem || typeof Globe !== 'function') return;
+      destroyBattleGlobe();
+      const attackerPoint = battleFeaturePoint(attacker);
+      const defenderPoint = battleFeaturePoint(defender);
+      battleGlobe = Globe()(elem)
+        .backgroundColor('rgba(0,0,0,0)')
+        .showAtmosphere(true)
+        .atmosphereColor('#f87171')
+        .atmosphereAltitude(0.11)
+        .polygonCapColor(feature => isBattleTargetFeature(feature) ? '#991b1b' : '#334155')
+        .polygonSideColor(() => 'rgba(15,23,42,.72)')
+        .polygonStrokeColor(feature => isBattleTargetFeature(feature) ? '#ef4444' : 'rgba(226,232,240,.28)')
+        .polygonAltitude(feature => isBattleTargetFeature(feature) ? 0.025 : 0.006)
+        .pointsData([
+          { ...attackerPoint, id: attacker.id, name: attacker.name, side: 'attacker' },
+          { ...defenderPoint, id: defender.id, name: defender.name, side: 'defender' }
+        ])
+        .pointLat('lat').pointLng('lng').pointColor(() => '#ef4444').pointRadius(0.55).pointAltitude(0.035)
+        .pointLabel(point => `<div style="padding:5px 8px;border:1px solid #ef4444;background:#270b0b;color:#fff;font:700 11px ui-monospace,monospace">${point.name}</div>`)
+        .arcsData([
+          { startLat: attackerPoint.lat, startLng: attackerPoint.lng, endLat: defenderPoint.lat, endLng: defenderPoint.lng, color: ['#ef4444', '#fecaca'], arcAlt: 0.28, stroke: 0.75 },
+          { startLat: defenderPoint.lat, startLng: defenderPoint.lng, endLat: attackerPoint.lat, endLng: attackerPoint.lng, color: ['#fecaca', '#ef4444'], arcAlt: 0.22, stroke: 0.55 }
+        ])
+        .arcColor('color').arcDashLength(0.42).arcDashGap(0.16).arcDashInitialGap(() => Math.random()).arcDashAnimateTime(2200)
+        .arcStroke('stroke');
+      fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
+        .then(response => response.json())
+        .then(data => {
+          battleGeoFeatures = data.features || [];
+          const refreshedAttackerPoint = battleFeaturePoint(attacker);
+          const refreshedDefenderPoint = battleFeaturePoint(defender);
+          battleGlobe.polygonsData(battleGeoFeatures)
+            .pointsData([
+              { ...refreshedAttackerPoint, id: attacker.id, name: attacker.name, side: 'attacker' },
+              { ...refreshedDefenderPoint, id: defender.id, name: defender.name, side: 'defender' }
+            ])
+            .arcsData([
+              { startLat: refreshedAttackerPoint.lat, startLng: refreshedAttackerPoint.lng, endLat: refreshedDefenderPoint.lat, endLng: refreshedDefenderPoint.lng, color: ['#ef4444', '#fecaca'], arcAlt: 0.28, stroke: 0.75 },
+              { startLat: refreshedDefenderPoint.lat, startLng: refreshedDefenderPoint.lng, endLat: refreshedAttackerPoint.lat, endLng: refreshedAttackerPoint.lng, color: ['#fecaca', '#ef4444'], arcAlt: 0.22, stroke: 0.55 }
+            ]);
+          battleGlobe.pointOfView({ lat: 22, lng: -8, altitude: 2.25 }, 0);
+          battleGlobe.controls().autoRotate = false;
+          const box = elem.getBoundingClientRect();
+          battleGlobe.width(Math.max(320, box.width)).height(Math.max(320, box.height));
+        })
+        .catch(error => console.warn('Savaş dünya haritası yüklenemedi:', error));
+    }
+
+    function populateTacticalSelects() {
+      if (!Array.isArray(allCountries) || !allCountries.length) return;
+      const options = allCountries.map((country) => `<option value="${country.id}">#${country.rank} — ${country.name}</option>`).join('');
+      const pairs = [['scenarioCountry1','scenarioCountry2'], ['simAttacker','simDefender']];
+      pairs.forEach(([firstId, secondId]) => {
+        const first = document.getElementById(firstId); const second = document.getElementById(secondId);
+        if (first) first.innerHTML = options;
+        if (second) second.innerHTML = options;
+      });
+      const turkey = allCountries.find((country) => country.id === 'turkey'); const usa = allCountries.find((country) => country.id === 'usa');
+      const first = document.getElementById('scenarioCountry1') || document.getElementById('simAttacker');
+      const second = document.getElementById('scenarioCountry2') || document.getElementById('simDefender');
+      if (first) first.value = usa?.id || allCountries[0].id;
+      if (second) second.value = turkey?.id || allCountries[1]?.id || allCountries[0].id;
+      if (document.getElementById('scenarioCountry1')) checkBorderStatus();
+    }
+    function openScenarioModal() { document.body.classList.add('simulation-selection'); populateTacticalSelects(); const overlay = document.getElementById('scenarioModal'); overlay.classList.remove('hidden'); checkBorderStatus(); }
+    function closeScenarioModal() { document.body.classList.remove('simulation-selection'); ['scenarioModal','simChoiceOverlay'].forEach(id => { const overlay = document.getElementById(id); if (overlay) { overlay.classList.add(id === 'scenarioModal' ? 'hidden' : ''); overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); } }); }
+    function executeAdvancedWargame() { startTacticalSimulation(); }
     function startTacticalSimulation() {
-      const attacker = allCountries.find((country) => country.id === document.getElementById('simAttacker').value) || allCountries.find((country) => country.id === 'usa') || allCountries[0];
-      const defender = allCountries.find((country) => country.id === document.getElementById('simDefender').value) || allCountries.find((country) => country.id === 'turkey') || allCountries[1] || allCountries[0];
+      const attackerId = document.getElementById('scenarioCountry1')?.value || document.getElementById('simAttacker')?.value;
+      const defenderId = document.getElementById('scenarioCountry2')?.value || document.getElementById('simDefender')?.value;
+      const attacker = allCountries.find((country) => country.id === attackerId) || allCountries.find((country) => country.id === 'usa') || allCountries[0];
+      const defender = allCountries.find((country) => country.id === defenderId) || allCountries.find((country) => country.id === 'turkey') || allCountries[1] || allCountries[0];
       if (!attacker || !defender || attacker.id === defender.id) { window.alert('Lütfen iki farklı ülke seçin.'); return; }
-      const type = document.querySelector('input[name="simType"]:checked')?.value || 'border'; closeScenarioModal(); const overlay = document.getElementById('battleOverlay'); const stage = document.getElementById('battleStage');
+      const borderRadio = document.getElementById('radioBorder');
+      if (borderRadio?.checked && !hasLandBorder(attacker.id, defender.id)) { checkBorderStatus(); window.alert('Sınır taarruzu yalnızca doğrudan kara sınırı olan ülkeler arasında kullanılabilir.'); return; }
+      const type = borderRadio?.checked ? 'border' : 'remote'; closeScenarioModal(); const overlay = document.getElementById('battleOverlay'); const stage = document.getElementById('battleStage');
       window.battleTargetIds = new Set([attacker.id, defender.id]);
       window.lastBattle = { attacker, defender, type };
       document.body.classList.add('conventional-battle');
-      stage.innerHTML = `<div class="battle-topline"><span>CONVENTIONAL WAR / ${type === 'border' ? 'BORDER CONTACT' : 'REMOTE AIR CAMPAIGN'}</span><span>ABSTRACT VISUALIZATION / 04 SEC</span></div><div class="battle-world conventional-world"><div class="world-disc" aria-hidden="true"></div><div class="battle-target usa"><span>${attacker.name}</span></div><div class="battle-target turkey"><span>${defender.name}</span></div><i class="fa-solid fa-jet-fighter battle-aircraft usa-flight" aria-label="${attacker.name} aircraft"></i><i class="fa-solid fa-jet-fighter battle-aircraft turkey-flight" aria-label="${defender.name} aircraft"></i><span class="battle-missile usa-shot"></span><span class="battle-missile turkey-shot"></span><span class="battle-route-label">RECIPROCAL AIR RESPONSE / VISUAL ONLY</span><strong id="battleCountdown" class="battle-countdown">04</strong></div>`;
+      stage.innerHTML = `<div class="battle-topline"><span>CONVENTIONAL WAR / ${type === 'border' ? 'BORDER CONTACT' : 'REMOTE AIR CAMPAIGN'}</span><span>REAL WORLD THEATER / 04 SEC</span></div><div class="battle-world conventional-world"><div id="battleGlobeViz" class="battle-globe-real" aria-label="Gerçek dünya savaş haritası"></div><i class="fa-solid fa-jet-fighter battle-aircraft usa-flight" aria-label="${attacker.name} aircraft"></i><i class="fa-solid fa-jet-fighter battle-aircraft turkey-flight" aria-label="${defender.name} aircraft"></i><span class="battle-route-label">REAL COORDINATES / VISUAL SIMULATION ONLY</span><strong id="battleCountdown" class="battle-countdown">04</strong></div>`;
+      requestAnimationFrame(() => initBattleGlobe(attacker, defender));
       overlay.classList.add('is-open'); overlay.setAttribute('aria-hidden','false'); let seconds = 4; const countdown = document.getElementById('battleCountdown'); clearInterval(tacticalTimer); tacticalTimer = window.setInterval(() => { seconds -= 1; if (countdown) countdown.textContent = seconds > 0 ? `0${seconds}` : ''; if (seconds <= 0) { clearInterval(tacticalTimer); showTacticalResult(attacker, defender, type); } }, 1000);
     }
     function showTacticalResult(attacker, defender, type) {
+      destroyBattleGlobe();
       const aScore = typeof calculateForceScore === 'function' ? calculateForceScore(attacker).total : Math.max(1, 100 - attacker.rank); const dScore = typeof calculateForceScore === 'function' ? calculateForceScore(defender).total : Math.max(1, 100 - defender.rank); const modifier = type === 'remote' ? 1.08 : 1; const winner = aScore * modifier >= dScore ? attacker : defender; const loser = winner.id === attacker.id ? defender : attacker; const stage = document.getElementById('battleStage'); stage.innerHTML = `<div class="battle-result"><span class="battle-kicker">SIMULATION COMPLETE / OUTCOME</span><h2>${winner.name} prevails.</h2><p>${type === 'remote' ? 'Uzaktan savaş senaryosunda menzil ve hava savunma dengesi' : 'Sınır taarruzu senaryosunda kuvvet yoğunluğu ve yıpratma dengesi'} ${winner.name} lehine sonuçlandı. Bu sonuç görsel ve eğitsel bir simülasyondur.</p><div class="result-score"><span>WINNER<strong>${winner.name}</strong></span><span>DEFEATED<strong>${loser.name}</strong></span></div><button class="sim-btn primary" onclick="showBattleComparison()">OPEN COMPARISON</button></div>`;
     }
     function showBattleComparison() {
@@ -2222,7 +2323,7 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
       renderSingleCompare();
       document.getElementById('detailSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-    function closeBattleSimulation() { clearInterval(tacticalTimer); const overlay = document.getElementById('battleOverlay'); overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); document.getElementById('battleStage').innerHTML = ''; document.body.classList.remove('conventional-battle'); window.battleTargetIds = new Set(); if (window.worldGlobe) worldGlobe.controls().autoRotate = true; }
+    function closeBattleSimulation() { clearInterval(tacticalTimer); destroyBattleGlobe(); const overlay = document.getElementById('battleOverlay'); overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); document.getElementById('battleStage').innerHTML = ''; document.body.classList.remove('conventional-battle'); window.battleTargetIds = new Set(); if (window.worldGlobe) worldGlobe.controls().autoRotate = true; }
   </script>
 </body>
 </html>
