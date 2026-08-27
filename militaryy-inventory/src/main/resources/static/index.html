@@ -2286,7 +2286,7 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
       if (document.getElementById('scenarioCountry1')) checkBorderStatus();
     }
     function openScenarioModal() { document.body.classList.add('simulation-selection'); populateTacticalSelects(); const overlay = document.getElementById('scenarioModal'); overlay.classList.remove('hidden'); checkBorderStatus(); }
-    function closeScenarioModal() { document.body.classList.remove('simulation-selection'); ['scenarioModal','simChoiceOverlay'].forEach(id => { const overlay = document.getElementById(id); if (overlay) { overlay.classList.add(id === 'scenarioModal' ? 'hidden' : ''); overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); } }); }
+    function closeScenarioModal() { document.body.classList.remove('simulation-selection'); ['scenarioModal','simChoiceOverlay'].forEach(id => { const overlay = document.getElementById(id); if (!overlay) return; if (id === 'scenarioModal') overlay.classList.add('hidden'); overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); }); }
     function executeAdvancedWargame() { startTacticalSimulation(); }
     function startTacticalSimulation() {
       const attackerId = document.getElementById('scenarioCountry1')?.value || document.getElementById('simAttacker')?.value;
