@@ -1,8 +1,140 @@
+/* Scrollbar & Genel Ayarlar */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); border-radius: 4px; }
 ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
 * { scrollbar-width: thin; scrollbar-color: #334155 rgba(15, 23, 42, 0.6); }
+
+/* Animasyonlar */
+@keyframes scanline {
+    0% { transform: translateY(-100%); }
+    100% { transform: translateY(1000%); }
+}
+
+.scanline {
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(244,63,94,0.15), rgba(255,255,255,0));
+    animation: scanline 4s linear infinite;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Detay Paneli Genel Ayarları */
+#country-details-section.hidden {
+    display: none;
+}
+
+#country-details-section {
+    animation: fadeIn 0.4s ease;
+}
+
+/* Üst Başlık & İttifak */
+.military-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0b1120;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+}
+
+.country-title-box {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.flag-icon {
+    font-size: 2.5rem;
+}
+
+.country-title-box h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.rank-badge {
+    display: inline-block;
+    background: rgba(234, 179, 8, 0.15);
+    color: #eab308;
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-top: 4px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.personnel-box {
+    background: #070b14;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    padding: 6px 14px;
+    text-align: center;
+}
+
+.personnel-box .label {
+    display: block;
+    font-size: 0.65rem;
+    color: #94a3b8;
+    font-weight: 700;
+}
+
+.personnel-box .value {
+    font-size: 1.1rem;
+    color: #eab308;
+    font-weight: 800;
+}
+
+.btn-tactical {
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-alliance {
+    background: #1e1b4b;
+    color: #818cf8;
+    border: 1px solid rgba(129, 140, 248, 0.3);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* Kuvvet Sekmeleri */
+.force-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    background: #0b1120;
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
 
 .tab-btn.active {
     background-color: rgba(245, 158, 11, 0.15);
@@ -10,11 +142,85 @@
     border-color: rgba(245, 158, 11, 0.5);
 }
 
-@keyframes scanline {
-    0% { transform: translateY(-100%); }
-    100% { transform: translateY(1000%); }
+/* Özet İstatistik Kartları */
+.summary-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
 }
-.scanline {
-    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(244,63,94,0.15), rgba(255,255,255,0));
-    animation: scanline 4s linear infinite;
+
+.sum-card {
+    background: #0b1120;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+}
+
+.sum-card span {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+.sum-card h3 {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: #f8fafc;
+    margin-top: 4px;
+}
+
+/* Envanter Gridleri */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.inv-col {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.inv-card {
+    background: #0b1120;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    font-weight: 800;
+    font-size: 0.88rem;
+    color: #f8fafc;
+}
+
+.text-orange { color: #f97316; margin-right: 6px; }
+.top-count { font-size: 0.8rem; color: #eab308; }
+
+.inv-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #070b14;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+}
+
+.item-count {
+    background: #172554;
+    color: #eab308;
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.8rem;
 }

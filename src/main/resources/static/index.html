@@ -35,6 +35,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- 3D Globe Kütüphaneleri -->
+    <script src="https://unpkg.com/three"></script>
+    <script src="https://unpkg.com/globe.gl"></script>
+
     <style>
         ::-webkit-scrollbar { width: 5px; height: 5px; }
         ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.6); border-radius: 4px; }
@@ -55,6 +59,16 @@
         .scanline {
             background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(244,63,94,0.15), rgba(255,255,255,0));
             animation: scanline 4s linear infinite;
+        }
+
+        /* 3D Globe Alanı */
+        #globe-section {
+            position: relative;
+            width: 100%;
+            height: 480px;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
         }
     </style>
 </head>
@@ -79,6 +93,18 @@
         </div>
     </div>
 </header>
+
+<!-- 3D İNTERAKTİF DÜNYA KÜRESİ ALANI -->
+<section id="globe-section">
+    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-10 text-center pointer-events-none w-full px-4">
+        <span class="inline-flex items-center space-x-2 bg-amber-500/10 text-amber-400 border border-amber-500/30 px-3.5 py-1.5 rounded-full text-xs font-bold tracking-wider uppercase backdrop-blur-md shadow-lg">
+            <i class="fa-solid fa-crosshairs text-amber-400 animate-pulse"></i>
+            <span>3D Taktiksel Küre & Askeri İstihbarat Haritası</span>
+        </span>
+        <p class="text-slate-400 text-xs mt-1.5 hidden sm:block">Küre üzerinden ülkelere tıklayarak doğrudan envanter ve savunma analizini görüntüleyin</p>
+    </div>
+    <div id="globeViz" class="w-full h-full cursor-grab active:cursor-grabbing"></div>
+</section>
 
 <!-- Main Grid -->
 <main class="flex-1 w-full px-4 sm:px-6 py-4 sm:py-6 grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -713,6 +739,7 @@
     let allianceSide2 = [];
     let radarChartInstance = null;
     let radarChartDrawTimer = null;
+    let worldGlobe = null;
 
     function toFiniteNumber(value, fallback = 0) {
         const number = Number(value);
@@ -748,8 +775,69 @@
         updateAllianceSlots();
     }
 
+    // --- 3D DÜNYA KÜRESİNİ BAŞLATMA (THREE.JS / GLOBE.GL) ---
+    function init3DGlobe() {
+        const elem = document.getElementById('globeViz');
+        if (!elem) return;
+
+        worldGlobe = Globe()(elem)
+            .backgroundColor('rgba(0,0,0,0)')
+            .showAtmosphere(true)
+            .atmosphereColor('#38bdf8')
+            .atmosphereAltitude(0.12)
+            .polygonCapColor(() => '#1e293b') // Taktiksel gri / füme yüzey
+            .polygonSideColor(() => 'rgba(15, 23, 42, 0.6)')
+            .polygonStrokeColor(() => 'rgba(255, 255, 255, 0.15)')
+            .polygonAltitude(0.008);
+
+        fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
+            .then(res => res.json())
+            .then(countries => {
+                worldGlobe.polygonsData(countries.features)
+                    .polygonLabel(({ properties: d }) => `
+                        <div style="background: rgba(11, 17, 32, 0.95); padding: 6px 12px; border-radius: 8px; border: 1px solid #f59e0b; color: #fff; font-family: ui-sans-serif, system-ui, sans-serif; font-size: 11px; box-shadow: 0 0 15px rgba(245,158,11,0.3);">
+                            <span style="color: #fbbf24; font-weight: 800; text-transform: uppercase;">${d.NAME}</span>
+                            <span style="display: block; color: #94a3b8; font-size: 10px; margin-top: 2px;">⚡ Tıkla ve Envanteri İncele</span>
+                        </div>
+                    `)
+                    .onPolygonHover(hoverD => worldGlobe
+                        .polygonCapColor(d => d === hoverD ? '#f59e0b' : '#1e293b') // Hover turuncu parlar
+                        .polygonAltitude(d => d === hoverD ? 0.04 : 0.008)
+                    )
+                    .onPolygonClick(({ properties: d }) => {
+                        const nameLower = d.NAME.toLowerCase();
+                        const country = allCountries.find(c =>
+                            c.name.toLowerCase() === nameLower ||
+                            c.id.toLowerCase() === nameLower ||
+                            (d.ISO_A2 && c.flagCode && c.flagCode.toLowerCase() === d.ISO_A2.toLowerCase())
+                        );
+
+                        if (country) {
+                            if (isCompareMode) exitCompareMode();
+                            showDetail(country.id);
+                            document.getElementById('detailSection').scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+            })
+            .catch(err => console.warn("Globe GeoJSON yüklenemedi:", err));
+
+        // Küreyi yavaşça otomatik döndür
+        worldGlobe.controls().autoRotate = true;
+        worldGlobe.controls().autoRotateSpeed = 0.5;
+
+        // Pencere boyutu değişince küreyi güncelle
+        window.addEventListener('resize', () => {
+            if (worldGlobe && elem) {
+                worldGlobe.width(elem.clientWidth);
+                worldGlobe.height(elem.clientHeight);
+            }
+        });
+    }
+
     async function init() {
         try {
+            init3DGlobe();
+
             const res = await fetch('/api/countries');
             if (!res.ok) throw new Error('API Hatası');
             allCountries = await res.json();
@@ -787,7 +875,6 @@
                 if (isCompareMode) exitCompareMode();
                 showDetail(c.id);
 
-                // Mobilde ülke seçildiğinde otomatik olarak detay paneline yumuşak kaydırma (scroll) yap
                 if (window.innerWidth < 1024) {
                     const detailSec = document.getElementById('detailSection');
                     if (detailSec) {

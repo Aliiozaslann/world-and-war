@@ -1,3 +1,61 @@
+// --- 1. STATİK / YEDEK ASKERİ VERİTABANI ---
+const militaryData = {
+    "USA": {
+        name: "Amerika Birleşik Devletleri",
+        flag: "🇺🇸",
+        rank: "Global Sıralama: #1",
+        personnel: "1.390.000",
+        tanks: "4.545",
+        apv: "27.300",
+        artillery: "1.625",
+        mbtTotal: "4.545",
+        mbt: [
+            { name: "M1A2 SEPv3 / SEPv2 Abrams", count: "2.645 ad." },
+            { name: "M1A1 Abrams", count: "1.900 ad." }
+        ],
+        afvTotal: "27.300",
+        afv: [
+            { name: "M2A3/A4 Bradley (ZMA)", count: "4.500 ad." },
+            { name: "M1126 Stryker (8x8)", count: "2.900 ad." },
+            { name: "M113A3", count: "5.000 ad." },
+            { name: "JLTV / Oshkosh (MRAP)", count: "14.500 ad." },
+            { name: "AMPV", count: "400 ad." }
+        ],
+        spgTotal: "990",
+        spg: [{ name: "M109A6 / A7 Paladin (155mm)", count: "990 ad." }],
+        mlrsTotal: "635",
+        mlrs: [
+            { name: "M142 HIMARS", count: "410 ad." },
+            { name: "M270A1/A2 MLRS", count: "225 ad." }
+        ]
+    },
+    "TUR": {
+        name: "Türkiye",
+        flag: "🇹🇷",
+        rank: "Global Sıralama: #8",
+        personnel: "425.000",
+        tanks: "2.231",
+        apv: "11.200",
+        artillery: "1.850",
+        mbtTotal: "2.231",
+        mbt: [
+            { name: "Altay T1 / T2", count: "250 ad." },
+            { name: "Leopard 2A4 (TİYK)", count: "340 ad." },
+            { name: "M60T Sabra", count: "165 ad." }
+        ],
+        afvTotal: "11.200",
+        afv: [
+            { name: "FNSS Pars / Arma (8x8)", count: "1.200 ad." },
+            { name: "ACV-15 / ZMA", count: "2.500 ad." },
+            { name: "BMC Vuran / Kirpi II", count: "3.400 ad." }
+        ],
+        spgTotal: "350",
+        spg: [{ name: "T-155 Fırtına I / II", count: "350 ad." }],
+        mlrsTotal: "180",
+        mlrs: [{ name: "TRG-300 Kaplan / Sakarya", count: "180 ad." }]
+    }
+};
+
 let allCountries = [];
 let activeId = null;
 let compareId = null;
@@ -9,6 +67,7 @@ let allianceSide1 = [];
 let allianceSide2 = [];
 let radarChartInstance = null;
 let radarChartDrawTimer = null;
+let worldGlobe = null;
 
 function toFiniteNumber(value, fallback = 0) {
     const number = Number(value);
@@ -44,10 +103,120 @@ function resetAllianceSelection() {
     updateAllianceSlots();
 }
 
+// --- 2. 3D DÜNYA KÜRESİ BAŞLATMA (GLOBE.GL) ---
+function init3DGlobe() {
+    const elem = document.getElementById('globeViz');
+    if (!elem) return;
+
+    worldGlobe = Globe()(elem)
+        .backgroundColor('#070b14')
+        .showAtmosphere(true)
+        .atmosphereColor('#38bdf8')
+        .atmosphereAltitude(0.15)
+        .polygonCapColor(() => '#1e293b')
+        .polygonSideColor(() => 'rgba(15, 23, 42, 0.5)')
+        .polygonStrokeColor(() => 'rgba(255, 255, 255, 0.15)')
+        .polygonAltitude(0.01);
+
+    fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
+        .then(res => res.json())
+        .then(countries => {
+            worldGlobe.polygonsData(countries.features)
+                .polygonLabel(({ properties: d }) => `
+                    <div style="background: rgba(11, 17, 32, 0.95); padding: 6px 12px; border-radius: 8px; border: 1px solid #f97316; color: #fff; font-family: sans-serif; font-size: 11px; box-shadow: 0 0 15px rgba(249,115,22,0.3);">
+                        <b style="color: #fbbf24;">${d.NAME}</b> (Tıkla ve İncele)
+                    </div>
+                `)
+                .onPolygonHover(hoverD => worldGlobe
+                    .polygonCapColor(d => d === hoverD ? '#f97316' : '#1e293b')
+                    .polygonAltitude(d => d === hoverD ? 0.05 : 0.01)
+                )
+                .onPolygonClick(({ properties: d }) => {
+                    const countryCode = d.ISO_A3 || d.ADM0_A3 || "";
+                    const nameLower = d.NAME.toLowerCase();
+
+                    // Önce Java API'sinden gelen liste içinde ara
+                    const apiCountry = allCountries.find(c =>
+                        c.name.toLowerCase() === nameLower ||
+                        c.id.toLowerCase() === nameLower ||
+                        (d.ISO_A2 && c.flagCode && c.flagCode.toLowerCase() === d.ISO_A2.toLowerCase())
+                    );
+
+                    if (apiCountry) {
+                        if (isCompareMode) exitCompareMode();
+                        showDetail(apiCountry.id);
+                        document.getElementById('detailSection').scrollIntoView({ behavior: 'smooth' });
+                    } else {
+                        loadCountryData(countryCode, d.NAME);
+                    }
+                });
+        })
+        .catch(err => console.warn("Globe GeoJSON yüklenemedi:", err));
+
+    worldGlobe.controls().autoRotate = true;
+    worldGlobe.controls().autoRotateSpeed = 0.6;
+
+    window.addEventListener('resize', () => {
+        if (worldGlobe && elem) {
+            worldGlobe.width(elem.clientWidth);
+            worldGlobe.height(elem.clientHeight);
+        }
+    });
+}
+
+function loadCountryData(code, defaultName) {
+    const data = militaryData[code] || {
+        name: defaultName,
+        flag: "🌐",
+        rank: "Global Sıralama: N/A",
+        personnel: "Veri Yok",
+        tanks: "-", apv: "-", artillery: "-",
+        mbtTotal: "-", mbt: [],
+        afvTotal: "-", afv: [],
+        spgTotal: "-", spg: [],
+        mlrsTotal: "-", mlrs: []
+    };
+
+    const country = allCountries.find(c => c.name.toLowerCase() === data.name.toLowerCase());
+    if (country) {
+        if (isCompareMode) exitCompareMode();
+        showDetail(country.id);
+        document.getElementById('detailSection').scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    const header = document.getElementById('countryHeader');
+    if (header) {
+        header.innerHTML = `
+            <div class="military-header">
+                <div class="country-title-box">
+                    <span class="flag-icon">${data.flag}</span>
+                    <div>
+                        <h1>${data.name}</h1>
+                        <span class="rank-badge">${data.rank}</span>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <div class="personnel-box">
+                        <span class="label">AKTİF PERSONEL</span>
+                        <span class="value">${data.personnel}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    document.getElementById('detailSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+// --- 3. JAVA BACKEND'DEN VERİ ÇEKME & INIT ---
 async function init() {
     try {
+        init3DGlobe();
+
+        // Java Spring Boot REST Controller endpointi
         const res = await fetch('/api/countries');
-        if (!res.ok) throw new Error('API Hatası');
+        if (!res.ok) throw new Error('Java API Hatası');
         allCountries = await res.json();
 
         renderList(allCountries);
@@ -63,6 +232,7 @@ async function init() {
 
 function renderList(list) {
     const container = document.getElementById('countryList');
+    if (!container) return;
     container.innerHTML = '';
 
     if (list.length === 0) {
@@ -82,6 +252,13 @@ function renderList(list) {
         div.onclick = () => {
             if (isCompareMode) exitCompareMode();
             showDetail(c.id);
+
+            if (window.innerWidth < 1024) {
+                const detailSec = document.getElementById('detailSection');
+                if (detailSec) {
+                    detailSec.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
         };
 
         div.innerHTML = `
@@ -516,8 +693,9 @@ function renderAllianceCountryPool(list) {
                 <button onclick="addToAlliance(1, '${c.id}')" ${s1Disabled ? 'disabled class="opacity-30 cursor-not-allowed px-2.5 py-1 bg-slate-800 rounded-lg text-[11px]"' : 'class="px-2.5 py-1 bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 border border-amber-500/40 rounded-lg font-bold text-[11px] transition"'}>
                     + 1. Blok
                 </button>
-                <button onclick="addToAlliance(2, '${c.id}')" ${s2Disabled ? 'disabled class="opacity-30 cursor-not-allowed px-2.5 py-1 bg-slate-800 rounded-lg text-[11px]"' : 'class="px-2.5 py-1 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-lg font-bold text-[11px] transition"'}>
-                    + 2. Blok
+<button onclick="addToAlliance(2, '${c.id}')" ${s2Disabled ? 'disabled class="opacity-30 cursor-not-allowed px-2.5 py-1 bg-slate-800 rounded-lg text-[11px]"' : 'class="px-2.5 py-1 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 rounded-lg font-bold text-[11px] transition"'}>
+    + 2. Blok
+</button>                    + 2. Blok
                 </button>
             </div>
         `;
