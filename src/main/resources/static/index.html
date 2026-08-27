@@ -113,40 +113,11 @@
       @media (max-width:640px) { .sim-choice-grid,.sim-type-row { grid-template-columns:1fr; } .sim-choice-card { padding:20px; } .battle-country:before { width:52px; height:52px; } .battle-country { font-size:10px; } .battle-country.attacker { left:5%; }.battle-country.defender { right:5%; } .battle-topline { font-size:8px; } }
     </style>
 <style>
-/* Conventional battle UI revision: centered full-world globe, red target borders, reciprocal aircraft and missile visualization. */
-#overview-section.overview-layout #globe-section { height:clamp(500px, calc(100vh - 205px), 720px)!important; min-height:500px; }
-#overview-section.overview-layout #globeViz { display:flex; align-items:center; justify-content:center; }
-#overview-section.overview-layout #globeViz canvas { max-width:100%; max-height:100%; }
-.battle-stage.conventional-stage { background:radial-gradient(circle at 50% 48%,#596068 0%,#343a40 46%,#1b1f23 100%); }
-.battle-stage.conventional-stage:after { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0,rgba(255,255,255,.025) 1px,transparent 1px,transparent 5px); mix-blend-mode:screen; }
-.battle-world.conventional-world { display:flex; align-items:center; justify-content:center; }
-.conventional-world .world-disc { position:absolute; width:min(66vw,720px); aspect-ratio:1; border:1px solid rgba(219,226,232,.32); border-radius:50%; background:radial-gradient(circle at 36% 28%,rgba(151,161,170,.48),rgba(56,62,68,.72) 58%,rgba(16,20,23,.92)); box-shadow:0 0 0 18px rgba(255,255,255,.035),0 0 70px rgba(0,0,0,.55), inset -48px -26px 80px rgba(0,0,0,.4); }
-.conventional-world .world-disc:before,.conventional-world .world-disc:after { content:""; position:absolute; inset:9% 20%; border:1px solid rgba(236,242,245,.16); border-radius:50%; transform:rotate(23deg) scaleX(.66); }
-.conventional-world .world-disc:after { inset:16% 7%; transform:rotate(-28deg) scaleY(.66); }
-.battle-target { position:absolute; z-index:3; display:flex; flex-direction:column; align-items:center; gap:7px; color:#fff; font:800 12px ui-monospace,monospace; text-shadow:0 2px 7px #111; }
-.battle-target:before { content:""; width:22px; height:22px; border:3px solid #ef4444; border-radius:50%; box-shadow:0 0 0 7px rgba(239,68,68,.15),0 0 24px rgba(239,68,68,.9); animation:target-pulse 1.1s infinite alternate; }
-.battle-target.usa { left:17%; top:37%; }.battle-target.turkey { right:17%; top:53%; }
-.battle-aircraft { position:absolute; z-index:5; color:#f8fafc; font-size:24px; filter:drop-shadow(0 3px 5px rgba(0,0,0,.65)); }
-.battle-aircraft.usa-flight { left:19%; top:36%; animation:aircraft-to-target 2.2s cubic-bezier(.25,.7,.2,1) forwards; }
-.battle-aircraft.turkey-flight { right:19%; top:52%; transform:scaleX(-1); animation:aircraft-from-target 2.2s cubic-bezier(.25,.7,.2,1) .4s forwards; }
-.battle-missile { position:absolute; z-index:4; height:3px; width:32%; background:#ef4444; box-shadow:0 0 8px #ff2020,0 0 24px rgba(255,0,0,.8); transform-origin:left center; }
-.battle-missile.usa-shot { left:22%; top:42%; transform:rotate(12deg); animation:shot-right 2s ease-in forwards; }
-.battle-missile.turkey-shot { right:22%; top:57%; transform:rotate(188deg); animation:shot-left 2s ease-in .55s forwards; }
-.battle-missile:after { content:""; position:absolute; right:-6px; top:-3px; width:9px; height:9px; border-radius:50%; background:#fff; box-shadow:0 0 12px #ef4444; }
-.battle-route-label { position:absolute; z-index:3; left:50%; top:72%; transform:translateX(-50%); padding:8px 12px; color:#ffd0d0; border:1px solid rgba(239,68,68,.5); background:rgba(62,21,25,.55); font:700 10px ui-monospace,monospace; letter-spacing:.14em; text-transform:uppercase; }
-@keyframes target-pulse { from { transform:scale(.86); opacity:.55; } to { transform:scale(1.12); opacity:1; } }
-@keyframes aircraft-to-target { 0% { transform:translate(0,0) rotate(-9deg); opacity:0; } 14% { opacity:1; } 100% { transform:translate(31vw,10vh) rotate(2deg); opacity:1; } }
-@keyframes aircraft-from-target { 0% { transform:scaleX(-1) translate(0,0) rotate(7deg); opacity:0; } 14% { opacity:1; } 100% { transform:scaleX(-1) translate(31vw,-11vh) rotate(-2deg); opacity:1; } }
-@keyframes shot-right { 0% { clip-path:inset(0 100% 0 0); opacity:0; } 14% { opacity:1; } 100% { clip-path:inset(0 0 0 0); opacity:1; } }
-@keyframes shot-left { 0% { clip-path:inset(0 100% 0 0); opacity:0; } 14% { opacity:1; } 100% { clip-path:inset(0 0 0 0); opacity:1; } }
-@media (max-width:640px) { .conventional-world .world-disc { width:76vw; }.battle-target.usa { left:7%; }.battle-target.turkey { right:7%; }.battle-aircraft { font-size:18px; }.battle-route-label { top:77%; font-size:8px; }.conventional-world .world-disc:before,.conventional-world .world-disc:after { display:none; } }
-</style>
-<style>
 /* Wireframe layout revision: left vertical nations rail, right globe and selected-country workspace. */
 body { background:#05080f; }
 #overview-section.overview-layout { display:grid; grid-template-columns:minmax(280px,330px) minmax(0,1fr); gap:18px; width:100%; padding:18px 18px 0; align-items:start; }
 #overview-section.overview-layout > section:first-child { grid-column:1; grid-row:1; position:sticky; top:84px; height:calc(100vh - 108px)!important; max-height:none!important; min-height:590px; overflow:hidden; }
-#overview-section.overview-layout #globe-section { grid-column:2; grid-row:1; height:clamp(500px, calc(100vh - 205px), 720px)!important; min-height:500px; border:1px solid rgba(51,65,85,.8); border-radius:18px; overflow:hidden; }
+#overview-section.overview-layout #globe-section { grid-column:2; grid-row:1; height:calc(100vh - 350px)!important; min-height:440px; border:1px solid rgba(51,65,85,.8); border-radius:18px; overflow:hidden; }
 #overview-section.overview-layout #globeViz { height:100%; min-height:100%; }
 main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 24px!important; }
 #detailSection { min-height:520px!important; height:auto!important; max-height:none!important; }
@@ -868,20 +839,6 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
         updateAllianceSlots();
     }
 
-    function isBattleTargetFeature(feature) {
-        const targetIds = window.battleTargetIds instanceof Set ? window.battleTargetIds : new Set();
-        if (!feature || !Array.isArray(allCountries) || targetIds.size === 0) return false;
-        const properties = feature.properties || {};
-        const nameLower = String(properties.NAME || '').toLowerCase();
-        const isoA2 = String(properties.ISO_A2 || '').toLowerCase();
-        const match = allCountries.find(country =>
-            String(country.name || '').toLowerCase() === nameLower ||
-            String(country.id || '').toLowerCase() === nameLower ||
-            String(country.flagCode || '').toLowerCase() === isoA2
-        );
-        return Boolean(match && targetIds.has(match.id));
-    }
-
     // --- 3D DÜNYA KÜRESİNİ BAŞLATMA (THREE.JS / GLOBE.GL) ---
     function init3DGlobe() {
         const elem = document.getElementById('globeViz');
@@ -892,9 +849,9 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
             .showAtmosphere(true)
             .atmosphereColor('#38bdf8')
             .atmosphereAltitude(0.12)
-.polygonCapColor((d) => isBattleTargetFeature(d) ? '#7f1d1d' : '#1e293b') // Hedef ülkeler kırmızı vurgulanır
+            .polygonCapColor(() => '#1e293b') // Taktiksel gri / füme yüzey
             .polygonSideColor(() => 'rgba(15, 23, 42, 0.6)')
-            .polygonStrokeColor((d) => isBattleTargetFeature(d) ? '#ef4444' : 'rgba(255, 255, 255, 0.15)')
+            .polygonStrokeColor(() => 'rgba(255, 255, 255, 0.15)')
             .polygonAltitude(0.008);
 
         fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
@@ -907,9 +864,9 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
                             <span style="display: block; color: #94a3b8; font-size: 10px; margin-top: 2px;">⚡ Tıkla ve Envanteri İncele</span>
                         </div>
                     `)
-.onPolygonHover(hoverD => worldGlobe
-                        .polygonCapColor(d => isBattleTargetFeature(d) ? '#7f1d1d' : (d === hoverD ? '#f59e0b' : '#1e293b'))
-                        .polygonAltitude(d => d === hoverD ? 0.04 : (isBattleTargetFeature(d) ? 0.018 : 0.008))
+                    .onPolygonHover(hoverD => worldGlobe
+                        .polygonCapColor(d => d === hoverD ? '#f59e0b' : '#1e293b') // Hover turuncu parlar
+                        .polygonAltitude(d => d === hoverD ? 0.04 : 0.008)
                     )
                     .onPolygonClick(({ properties: d }) => {
                         const nameLower = d.NAME.toLowerCase();
@@ -928,19 +885,17 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
             })
             .catch(err => console.warn("Globe GeoJSON yüklenemedi:", err));
 
-        // Küreyi yavaşça otomatik döndür ve dikdörtgen sahneye tam sığdır
-        window.worldGlobe = worldGlobe;
+        // Küreyi yavaşça otomatik döndür
         worldGlobe.controls().autoRotate = true;
-        worldGlobe.controls().autoRotateSpeed = 0.12;
-        const fitGlobeToPanel = () => {
-            if (!worldGlobe || !elem) return;
-            const box = elem.getBoundingClientRect();
-            worldGlobe.width(Math.max(320, box.width));
-            worldGlobe.height(Math.max(280, box.height));
-            worldGlobe.pointOfView({ lat: 18, lng: 12, altitude: 2.35 }, 0);
-        };
-        requestAnimationFrame(fitGlobeToPanel);
-        window.addEventListener('resize', fitGlobeToPanel);
+        worldGlobe.controls().autoRotateSpeed = 0.15;
+
+        // Pencere boyutu değişince küreyi güncelle
+        window.addEventListener('resize', () => {
+            if (worldGlobe && elem) {
+                worldGlobe.width(elem.clientWidth);
+                worldGlobe.height(elem.clientHeight);
+            }
+        });
     }
 
     async function init() {
@@ -2188,41 +2143,23 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
       const options = allCountries.map((country) => `<option value="${country.id}">#${country.rank} — ${country.name}</option>`).join('');
       attacker.innerHTML = options; defender.innerHTML = options;
       const turkey = allCountries.find((country) => country.id === 'turkey'); const usa = allCountries.find((country) => country.id === 'usa');
-      if (usa) attacker.value = usa.id; if (turkey) defender.value = turkey.id;
+      if (turkey) attacker.value = turkey.id; if (usa) defender.value = usa.id;
       if (attacker.value === defender.value && allCountries[1]) defender.value = allCountries[1].id;
     }
     function openScenarioModal() { document.body.classList.add('simulation-selection'); populateTacticalSelects(); const overlay = document.getElementById('simChoiceOverlay'); overlay.classList.add('is-open'); overlay.setAttribute('aria-hidden','false'); }
     function closeScenarioModal() { document.body.classList.remove('simulation-selection'); const overlay = document.getElementById('simChoiceOverlay'); if (overlay) { overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); } }
     function startTacticalSimulation() {
-      const attacker = allCountries.find((country) => country.id === document.getElementById('simAttacker').value) || allCountries.find((country) => country.id === 'usa') || allCountries[0];
-      const defender = allCountries.find((country) => country.id === document.getElementById('simDefender').value) || allCountries.find((country) => country.id === 'turkey') || allCountries[1] || allCountries[0];
+      const attacker = allCountries.find((country) => country.id === document.getElementById('simAttacker').value) || allCountries[0];
+      const defender = allCountries.find((country) => country.id === document.getElementById('simDefender').value) || allCountries[1] || allCountries[0];
       if (!attacker || !defender || attacker.id === defender.id) { window.alert('Lütfen iki farklı ülke seçin.'); return; }
       const type = document.querySelector('input[name="simType"]:checked')?.value || 'border'; closeScenarioModal(); const overlay = document.getElementById('battleOverlay'); const stage = document.getElementById('battleStage');
-      window.battleTargetIds = new Set([attacker.id, defender.id]);
-      window.lastBattle = { attacker, defender, type };
-      document.body.classList.add('conventional-battle');
-      stage.innerHTML = `<div class="battle-topline"><span>CONVENTIONAL WAR / ${type === 'border' ? 'BORDER CONTACT' : 'REMOTE AIR CAMPAIGN'}</span><span>ABSTRACT VISUALIZATION / 04 SEC</span></div><div class="battle-world conventional-world"><div class="world-disc" aria-hidden="true"></div><div class="battle-target usa"><span>${attacker.name}</span></div><div class="battle-target turkey"><span>${defender.name}</span></div><i class="fa-solid fa-jet-fighter battle-aircraft usa-flight" aria-label="${attacker.name} aircraft"></i><i class="fa-solid fa-jet-fighter battle-aircraft turkey-flight" aria-label="${defender.name} aircraft"></i><span class="battle-missile usa-shot"></span><span class="battle-missile turkey-shot"></span><span class="battle-route-label">RECIPROCAL AIR RESPONSE / VISUAL ONLY</span><strong id="battleCountdown" class="battle-countdown">04</strong></div>`;
+      stage.innerHTML = `<div class="battle-topline"><span>TACTICAL SIMULATION / ${type === 'border' ? 'BORDER CONTACT' : 'REMOTE STRIKE'}</span><span>ABSTRACT VISUALIZATION / 04 SEC</span></div><div class="battle-world"><div class="battle-country attacker">${attacker.name}</div><div class="battle-country defender">${defender.name}</div><span class="missile one"></span><span class="missile two"></span><span class="missile three"></span><strong id="battleCountdown" class="battle-countdown">04</strong></div>`;
       overlay.classList.add('is-open'); overlay.setAttribute('aria-hidden','false'); let seconds = 4; const countdown = document.getElementById('battleCountdown'); clearInterval(tacticalTimer); tacticalTimer = window.setInterval(() => { seconds -= 1; if (countdown) countdown.textContent = seconds > 0 ? `0${seconds}` : ''; if (seconds <= 0) { clearInterval(tacticalTimer); showTacticalResult(attacker, defender, type); } }, 1000);
     }
     function showTacticalResult(attacker, defender, type) {
-      const aScore = typeof calculateForceScore === 'function' ? calculateForceScore(attacker).total : Math.max(1, 100 - attacker.rank); const dScore = typeof calculateForceScore === 'function' ? calculateForceScore(defender).total : Math.max(1, 100 - defender.rank); const modifier = type === 'remote' ? 1.08 : 1; const winner = aScore * modifier >= dScore ? attacker : defender; const loser = winner.id === attacker.id ? defender : attacker; const stage = document.getElementById('battleStage'); stage.innerHTML = `<div class="battle-result"><span class="battle-kicker">SIMULATION COMPLETE / OUTCOME</span><h2>${winner.name} prevails.</h2><p>${type === 'remote' ? 'Uzaktan savaş senaryosunda menzil ve hava savunma dengesi' : 'Sınır taarruzu senaryosunda kuvvet yoğunluğu ve yıpratma dengesi'} ${winner.name} lehine sonuçlandı. Bu sonuç görsel ve eğitsel bir simülasyondur.</p><div class="result-score"><span>WINNER<strong>${winner.name}</strong></span><span>DEFEATED<strong>${loser.name}</strong></span></div><button class="sim-btn primary" onclick="showBattleComparison()">OPEN COMPARISON</button></div>`;
+      const aScore = typeof calculateForceScore === 'function' ? calculateForceScore(attacker).total : Math.max(1, 100 - attacker.rank); const dScore = typeof calculateForceScore === 'function' ? calculateForceScore(defender).total : Math.max(1, 100 - defender.rank); const modifier = type === 'remote' ? 1.08 : 1; const winner = aScore * modifier >= dScore ? attacker : defender; const loser = winner.id === attacker.id ? defender : attacker; const stage = document.getElementById('battleStage'); stage.innerHTML = `<div class="battle-result"><span class="battle-kicker">SIMULATION COMPLETE / OUTCOME</span><h2>${winner.name} prevails.</h2><p>${type === 'remote' ? 'Uzaktan savaş senaryosunda menzil ve hava savunma dengesi' : 'Sınır taarruzu senaryosunda kuvvet yoğunluğu ve yıpratma dengesi'} ${winner.name} lehine sonuçlandı. Bu sonuç görsel ve eğitsel bir simülasyondur.</p><div class="result-score"><span>WINNER<strong>${winner.name}</strong></span><span>DEFEATED<strong>${loser.name}</strong></span></div><button class="sim-btn primary" onclick="closeBattleSimulation()">RETURN TO CONSOLE</button></div>`;
     }
-    function showBattleComparison() {
-      const battle = window.lastBattle;
-      closeBattleSimulation();
-      if (!battle) return;
-      activeId = battle.attacker.id;
-      compareId = battle.defender.id;
-      isScenarioMode = false;
-      isAllianceMode = false;
-      isCompareMode = true;
-      document.getElementById('singleView').classList.add('hidden');
-      document.getElementById('compareView').classList.remove('hidden');
-      document.getElementById('compareViewTitle').innerText = `Konvansiyonel Savaş Sonrası Karşılaştırma: ${battle.attacker.name} vs ${battle.defender.name}`;
-      renderSingleCompare();
-      document.getElementById('detailSection')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    function closeBattleSimulation() { clearInterval(tacticalTimer); const overlay = document.getElementById('battleOverlay'); overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); document.getElementById('battleStage').innerHTML = ''; document.body.classList.remove('conventional-battle'); window.battleTargetIds = new Set(); if (window.worldGlobe) worldGlobe.controls().autoRotate = true; }
+    function closeBattleSimulation() { clearInterval(tacticalTimer); const overlay = document.getElementById('battleOverlay'); overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); document.getElementById('battleStage').innerHTML = ''; }
   </script>
 </body>
 </html>
