@@ -4,7 +4,31 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e4194b29-a866-4844-8f00-a813aec099a4" name="Changes" comment="" />
+    <list default="true" id="e4194b29-a866-4844-8f00-a813aec099a4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/googled03dedb65adf5971 (1).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/googled03dedb65adf5971 (2).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/java/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/java/controller/CountryController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/java/model/AirDefense.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/java/model/AirForces.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/java/model/Country.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/java/model/LandForces.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/java/model/NavalForces.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/java/service/CountryService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/resources/data/countries.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/resources/static/app.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/resources/static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/resources/static/style.css" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,23 +51,23 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0005493834879582" />
-      <entry key="MS500" value="1.3238797406281684" />
-      <entry key="S2" value="4.450196673235441" />
-      <entry key="S5" value="10.47891347974758" />
-      <entry key="S10" value="17.870357434843836" />
-      <entry key="S30" value="38.42878954979038" />
-      <entry key="S60" value="52.61807051938214" />
-      <entry key="M2" value="63.10650654284133" />
-      <entry key="M5" value="71.12147323465615" />
-      <entry key="M10" value="79.26338330348777" />
-      <entry key="M15" value="93.24873259362647" />
-      <entry key="M30" value="141.39888408152427" />
-      <entry key="H1" value="202.50036339917645" />
-      <entry key="H2" value="252.5073276739073" />
-      <entry key="H4" value="284.7189897218407" />
-      <entry key="D1" value="316.1506699633322" />
-      <entry key="W1" value="322.0093550077803" />
+      <entry key="MS100" value="1.0887165994458812" />
+      <entry key="MS500" value="2.7190985235683263" />
+      <entry key="S2" value="8.533589197239623" />
+      <entry key="S5" value="13.502349383425807" />
+      <entry key="S10" value="18.246217600394512" />
+      <entry key="S30" value="29.078239486005025" />
+      <entry key="S60" value="39.30793294182612" />
+      <entry key="M2" value="50.58668284473746" />
+      <entry key="M5" value="72.17552637468553" />
+      <entry key="M10" value="97.04246961112833" />
+      <entry key="M15" value="117.52154276971137" />
+      <entry key="M30" value="172.6376064387314" />
+      <entry key="H1" value="242.71153526099897" />
+      <entry key="H2" value="302.6766185361108" />
+      <entry key="H4" value="342.51568828051535" />
+      <entry key="D1" value="382.2383194907572" />
+      <entry key="W1" value="389.7304877257814" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -65,23 +89,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.003881071085236503" />
-      <entry key="MS500" value="0.49883208062662643" />
-      <entry key="S2" value="4.021532748948783" />
-      <entry key="S5" value="10.264009621134328" />
-      <entry key="S10" value="17.750152693661384" />
-      <entry key="S30" value="38.38073906731631" />
-      <entry key="S60" value="52.591328925597836" />
-      <entry key="M2" value="63.092098069159604" />
-      <entry key="M5" value="71.11536379245946" />
-      <entry key="M10" value="79.25982305334831" />
-      <entry key="M15" value="93.2456126590758" />
-      <entry key="M30" value="141.39600374614895" />
-      <entry key="H1" value="202.49808748229802" />
-      <entry key="H2" value="252.50584954433398" />
-      <entry key="H4" value="284.7181414856945" />
-      <entry key="D1" value="316.1505108796813" />
-      <entry key="W1" value="322.0093318105792" />
+      <entry key="MS100" value="0.1653991205439684" />
+      <entry key="MS500" value="2.306888837850371" />
+      <entry key="S2" value="8.388501240041627" />
+      <entry key="S5" value="13.433929039037938" />
+      <entry key="S10" value="18.20735451953174" />
+      <entry key="S30" value="29.058362657703764" />
+      <entry key="S60" value="39.29240119507585" />
+      <entry key="M2" value="50.57559219716486" />
+      <entry key="M5" value="72.1688856532444" />
+      <entry key="M10" value="97.03794010558214" />
+      <entry key="M15" value="117.51770884836799" />
+      <entry key="M30" value="172.6343749598289" />
+      <entry key="H1" value="242.70902078451536" />
+      <entry key="H2" value="302.6749694467651" />
+      <entry key="H4" value="342.51473283590184" />
+      <entry key="D1" value="382.2381384464354" />
+      <entry key="W1" value="389.73046127427517" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -99,6 +123,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Application.Main.executor": "Run",
+    "Maven.militaryy-inventory [package].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
