@@ -112,6 +112,27 @@
       .result-score strong { display:block; margin-top:5px; color:#fff; font-size:24px; }
       @media (max-width:640px) { .sim-choice-grid,.sim-type-row { grid-template-columns:1fr; } .sim-choice-card { padding:20px; } .battle-country:before { width:52px; height:52px; } .battle-country { font-size:10px; } .battle-country.attacker { left:5%; }.battle-country.defender { right:5%; } .battle-topline { font-size:8px; } }
     </style>
+<style>
+/* Wireframe layout revision: left vertical nations rail, right globe and selected-country workspace. */
+body { background:#05080f; }
+#overview-section.overview-layout { display:grid; grid-template-columns:minmax(280px,330px) minmax(0,1fr); gap:18px; width:100%; padding:18px 18px 0; align-items:start; }
+#overview-section.overview-layout > section:first-child { grid-column:1; grid-row:1; position:sticky; top:84px; height:calc(100vh - 108px)!important; max-height:none!important; min-height:590px; overflow:hidden; }
+#overview-section.overview-layout #globe-section { grid-column:2; grid-row:1; height:calc(100vh - 350px)!important; min-height:440px; border:1px solid rgba(51,65,85,.8); border-radius:18px; overflow:hidden; }
+#overview-section.overview-layout #globeViz { height:100%; min-height:100%; }
+main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 24px!important; }
+#detailSection { min-height:520px!important; height:auto!important; max-height:none!important; }
+@media (max-width:1023px) {
+  #overview-section.overview-layout { grid-template-columns:1fr; padding:14px 14px 0; }
+  #overview-section.overview-layout > section:first-child { grid-column:1; position:relative; top:auto; height:390px!important; min-height:390px; }
+  #overview-section.overview-layout #globe-section { grid-column:1; grid-row:2; height:460px!important; min-height:360px; }
+  main { width:100%!important; margin-left:0; padding:14px!important; }
+}
+@media (max-width:640px) {
+  #overview-section.overview-layout > section:first-child { height:350px!important; min-height:350px; }
+  #overview-section.overview-layout #globe-section { height:350px!important; }
+  #detailSection { min-height:420px!important; }
+}
+</style>
 </head>
 <body class="text-slate-100 min-h-screen bg-slate-950 flex flex-col antialiased selection:bg-amber-500 selection:text-black">
 
