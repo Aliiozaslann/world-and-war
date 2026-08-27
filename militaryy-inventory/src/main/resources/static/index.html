@@ -71,6 +71,47 @@
             overflow: hidden;
         }
     </style>
+    <style>
+      /* Tactical simulation overlay: abstract game visualization, not operational guidance. */
+      body.simulation-selection #overview-section, body.simulation-selection #detailSection { display:none !important; }
+      .sim-choice-overlay,.battle-overlay { position:fixed; inset:0; z-index:100; display:none; align-items:center; justify-content:center; padding:20px; background:rgba(2,6,14,.94); backdrop-filter:blur(16px); }
+      .sim-choice-overlay.is-open,.battle-overlay.is-open { display:flex; }
+      .sim-choice-card { width:min(720px,100%); padding:28px; border:1px solid rgba(245,158,11,.48); border-radius:24px; background:linear-gradient(145deg,#111b2b,#080d17); box-shadow:0 0 55px rgba(0,0,0,.55); }
+      .sim-choice-kicker,.battle-kicker { color:#fbbf24; font:700 10px ui-monospace,monospace; letter-spacing:.16em; text-transform:uppercase; }
+      .sim-choice-card h2 { margin:8px 0 8px; color:#f8fafc; font-size:clamp(24px,4vw,38px); font-weight:900; letter-spacing:-.03em; }
+      .sim-choice-card p { margin:0 0 22px; color:#94a3b8; font-size:13px; line-height:1.65; }
+      .sim-choice-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+      .sim-field label { display:block; margin:0 0 7px; color:#8fa1b4; font:700 10px ui-monospace,monospace; letter-spacing:.09em; text-transform:uppercase; }
+      .sim-field select { width:100%; padding:12px; border:1px solid #334155; border-radius:10px; background:#070d16; color:#e2e8f0; }
+      .sim-type-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:18px; }
+      .sim-type { display:block; padding:13px; border:1px solid #334155; border-radius:12px; background:#0a111d; color:#94a3b8; cursor:pointer; }
+      .sim-type input { accent-color:#f59e0b; margin-right:8px; }
+      .sim-type:has(input:checked) { border-color:#f59e0b; color:#fbbf24; background:rgba(245,158,11,.11); }
+      .sim-choice-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:22px; }
+      .sim-btn { padding:12px 17px; border:1px solid #334155; border-radius:10px; color:#cbd5e1; background:#172234; font:700 11px ui-monospace,monospace; cursor:pointer; }
+      .sim-btn.primary { color:#170e02; border-color:#f59e0b; background:#f59e0b; }
+      .battle-overlay { align-items:stretch; padding:0; background:#73777b; overflow:hidden; }
+      .battle-stage { position:relative; width:100%; height:100%; display:flex; flex-direction:column; overflow:hidden; background:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px),#73777b; background-size:44px 44px; }
+      .battle-stage:before { content:""; position:absolute; inset:10% 5%; border:1px solid rgba(255,255,255,.18); border-radius:50%; transform:scaleX(1.55); box-shadow:0 0 0 32px rgba(255,255,255,.045),0 0 0 90px rgba(255,255,255,.035); }
+      .battle-topline { position:relative; z-index:2; display:flex; justify-content:space-between; padding:22px clamp(18px,4vw,60px); color:#f8fafc; background:rgba(33,37,41,.64); border-bottom:1px solid rgba(255,255,255,.22); font:700 11px ui-monospace,monospace; letter-spacing:.1em; }
+      .battle-topline span:last-child { color:#ffc0c0; }
+      .battle-world { position:relative; z-index:1; flex:1; min-height:0; }
+      .battle-country { position:absolute; top:50%; display:flex; flex-direction:column; align-items:center; gap:8px; transform:translateY(-50%); color:#fff; font:800 13px ui-monospace,monospace; text-shadow:0 2px 5px #333; }
+      .battle-country:before { content:""; width:78px; height:78px; border:2px solid rgba(255,255,255,.65); border-radius:50%; background:rgba(38,42,46,.35); box-shadow:0 0 25px rgba(0,0,0,.22); }
+      .battle-country.attacker { left:12%; }.battle-country.defender { right:12%; }
+      .missile { position:absolute; left:15%; top:48%; width:70%; height:3px; transform-origin:left center; background:#d92323; box-shadow:0 0 9px #ff2f2f,0 0 22px rgba(255,0,0,.75); animation:missile-flight 4s cubic-bezier(.2,.75,.3,1) forwards; }
+      .missile:after { content:""; position:absolute; right:-7px; top:-3px; width:10px; height:10px; border-radius:50%; background:#ffefef; box-shadow:0 0 12px #ff1717; }
+      .missile.one { top:42%; transform:rotate(7deg); }.missile.two { top:52%; left:82%; width:68%; transform:rotate(176deg); animation-delay:.38s; }.missile.three { top:60%; transform:rotate(-5deg); animation-delay:.82s; }
+      @keyframes missile-flight { 0% { clip-path:inset(0 100% 0 0); opacity:0; } 10% { opacity:1; } 88% { clip-path:inset(0 0 0 0); opacity:1; } 100% { clip-path:inset(0 0 0 0); opacity:.25; } }
+      .battle-countdown { position:absolute; left:50%; top:50%; z-index:3; transform:translate(-50%,-50%); color:#fff; font:900 clamp(42px,8vw,96px) ui-monospace,monospace; text-shadow:0 3px 20px #292929; animation:battle-pulse 1s infinite alternate; }
+      @keyframes battle-pulse { from { opacity:.45; transform:translate(-50%,-50%) scale(.95); } to { opacity:1; transform:translate(-50%,-50%) scale(1.04); } }
+      .battle-result { position:relative; z-index:5; width:min(640px,100%); margin:auto; padding:34px; text-align:center; border:1px solid rgba(255,255,255,.38); background:rgba(28,32,36,.9); box-shadow:0 0 60px rgba(0,0,0,.35); }
+      .battle-result h2 { margin:9px 0; color:#fff; font-size:clamp(30px,6vw,56px); font-weight:900; letter-spacing:-.05em; }
+      .battle-result p { margin:8px 0 22px; color:#d5dbe0; line-height:1.65; }
+      .result-score { display:flex; justify-content:center; gap:30px; margin:20px 0; color:#ffb0b0; font:700 13px ui-monospace,monospace; }
+      .result-score strong { display:block; margin-top:5px; color:#fff; font-size:24px; }
+      @media (max-width:640px) { .sim-choice-grid,.sim-type-row { grid-template-columns:1fr; } .sim-choice-card { padding:20px; } .battle-country:before { width:52px; height:52px; } .battle-country { font-size:10px; } .battle-country.attacker { left:5%; }.battle-country.defender { right:5%; } .battle-topline { font-size:8px; } }
+    </style>
 </head>
 <body class="text-slate-100 min-h-screen bg-slate-950 flex flex-col antialiased selection:bg-amber-500 selection:text-black">
 
@@ -2070,5 +2111,34 @@
 
     init();
 </script>
+  <div id="simChoiceOverlay" class="sim-choice-overlay" aria-hidden="true"><div class="sim-choice-card"><span class="sim-choice-kicker">TACTICAL WAR SIMULATOR / SETUP</span><h2>Choose the theater.</h2><p>İki ülkeyi ve yüksek seviyeli simülasyon türünü seçin. Bu mod, yalnızca görsel ve eğitsel bir güç dengesi gösterimidir.</p><div class="sim-choice-grid"><div class="sim-field"><label for="simAttacker">Attacker / Force A</label><select id="simAttacker"></select></div><div class="sim-field"><label for="simDefender">Defender / Force B</label><select id="simDefender"></select></div></div><div class="sim-type-row"><label class="sim-type"><input type="radio" name="simType" value="border" checked> Sınır taarruzu / yakın temas</label><label class="sim-type"><input type="radio" name="simType" value="remote"> Uzaktan savaş / menzil</label></div><div class="sim-choice-actions"><button class="sim-btn" onclick="closeScenarioModal()">CANCEL</button><button class="sim-btn primary" onclick="startTacticalSimulation()">RUN SIMULATION</button></div></div></div>
+  <div id="battleOverlay" class="battle-overlay" aria-hidden="true"><div id="battleStage" class="battle-stage"></div></div>
+  <script>
+    /* Full-screen tactical simulation: abstract visualization only. */
+    let tacticalTimer = null;
+    function populateTacticalSelects() {
+      const attacker = document.getElementById('simAttacker'); const defender = document.getElementById('simDefender');
+      if (!attacker || !defender || !Array.isArray(allCountries) || !allCountries.length) return;
+      const options = allCountries.map((country) => `<option value="${country.id}">#${country.rank} — ${country.name}</option>`).join('');
+      attacker.innerHTML = options; defender.innerHTML = options;
+      const turkey = allCountries.find((country) => country.id === 'turkey'); const usa = allCountries.find((country) => country.id === 'usa');
+      if (turkey) attacker.value = turkey.id; if (usa) defender.value = usa.id;
+      if (attacker.value === defender.value && allCountries[1]) defender.value = allCountries[1].id;
+    }
+    function openScenarioModal() { document.body.classList.add('simulation-selection'); populateTacticalSelects(); const overlay = document.getElementById('simChoiceOverlay'); overlay.classList.add('is-open'); overlay.setAttribute('aria-hidden','false'); }
+    function closeScenarioModal() { document.body.classList.remove('simulation-selection'); const overlay = document.getElementById('simChoiceOverlay'); if (overlay) { overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); } }
+    function startTacticalSimulation() {
+      const attacker = allCountries.find((country) => country.id === document.getElementById('simAttacker').value) || allCountries[0];
+      const defender = allCountries.find((country) => country.id === document.getElementById('simDefender').value) || allCountries[1] || allCountries[0];
+      if (!attacker || !defender || attacker.id === defender.id) { window.alert('Lütfen iki farklı ülke seçin.'); return; }
+      const type = document.querySelector('input[name="simType"]:checked')?.value || 'border'; closeScenarioModal(); const overlay = document.getElementById('battleOverlay'); const stage = document.getElementById('battleStage');
+      stage.innerHTML = `<div class="battle-topline"><span>TACTICAL SIMULATION / ${type === 'border' ? 'BORDER CONTACT' : 'REMOTE STRIKE'}</span><span>ABSTRACT VISUALIZATION / 04 SEC</span></div><div class="battle-world"><div class="battle-country attacker">${attacker.name}</div><div class="battle-country defender">${defender.name}</div><span class="missile one"></span><span class="missile two"></span><span class="missile three"></span><strong id="battleCountdown" class="battle-countdown">04</strong></div>`;
+      overlay.classList.add('is-open'); overlay.setAttribute('aria-hidden','false'); let seconds = 4; const countdown = document.getElementById('battleCountdown'); clearInterval(tacticalTimer); tacticalTimer = window.setInterval(() => { seconds -= 1; if (countdown) countdown.textContent = seconds > 0 ? `0${seconds}` : ''; if (seconds <= 0) { clearInterval(tacticalTimer); showTacticalResult(attacker, defender, type); } }, 1000);
+    }
+    function showTacticalResult(attacker, defender, type) {
+      const aScore = typeof calculateForceScore === 'function' ? calculateForceScore(attacker).total : Math.max(1, 100 - attacker.rank); const dScore = typeof calculateForceScore === 'function' ? calculateForceScore(defender).total : Math.max(1, 100 - defender.rank); const modifier = type === 'remote' ? 1.08 : 1; const winner = aScore * modifier >= dScore ? attacker : defender; const loser = winner.id === attacker.id ? defender : attacker; const stage = document.getElementById('battleStage'); stage.innerHTML = `<div class="battle-result"><span class="battle-kicker">SIMULATION COMPLETE / OUTCOME</span><h2>${winner.name} prevails.</h2><p>${type === 'remote' ? 'Uzaktan savaş senaryosunda menzil ve hava savunma dengesi' : 'Sınır taarruzu senaryosunda kuvvet yoğunluğu ve yıpratma dengesi'} ${winner.name} lehine sonuçlandı. Bu sonuç görsel ve eğitsel bir simülasyondur.</p><div class="result-score"><span>WINNER<strong>${winner.name}</strong></span><span>DEFEATED<strong>${loser.name}</strong></span></div><button class="sim-btn primary" onclick="closeBattleSimulation()">RETURN TO CONSOLE</button></div>`;
+    }
+    function closeBattleSimulation() { clearInterval(tacticalTimer); const overlay = document.getElementById('battleOverlay'); overlay.classList.remove('is-open'); overlay.setAttribute('aria-hidden','true'); document.getElementById('battleStage').innerHTML = ''; }
+  </script>
 </body>
 </html>
