@@ -145,6 +145,25 @@
 .battle-globe-real:after { content:"LIVE GEOSPATIAL THEATER / SELECTED BORDERS IN RED"; position:absolute; left:50%; bottom:18px; transform:translateX(-50%); padding:7px 11px; color:#fecaca; border:1px solid rgba(239,68,68,.48); background:rgba(20,25,29,.7); font:700 9px ui-monospace,monospace; letter-spacing:.12em; white-space:nowrap; }
 .battle-aircraft { pointer-events:none; }
 @media (max-width:640px) { .conventional-world .world-disc { width:76vw; }.battle-target.usa { left:7%; }.battle-target.turkey { right:7%; }.battle-aircraft { font-size:18px; }.battle-route-label { top:77%; font-size:8px; }.conventional-world .world-disc:before,.conventional-world .world-disc:after { display:none; }.battle-globe-real { inset:54px -10% 0; }.battle-globe-real:after { bottom:10px; font-size:7px; } }
+.battle-result { position:relative; width:min(920px,calc(100% - 48px)); padding:48px 54px 42px; border:1px solid rgba(248,113,113,.48); background:linear-gradient(135deg,rgba(18,23,29,.97),rgba(30,35,41,.96)); box-shadow:0 28px 90px rgba(0,0,0,.55),inset 0 1px rgba(255,255,255,.06); text-align:center; overflow:hidden; }
+.battle-result:before { content:""; position:absolute; inset:0; pointer-events:none; background:linear-gradient(90deg,transparent,rgba(239,68,68,.08),transparent); transform:translateX(-100%); animation:result-scan 2.8s linear infinite; }
+.battle-result .battle-kicker { display:inline-flex; padding:7px 12px; border:1px solid rgba(245,158,11,.55); color:#fbbf24; background:rgba(245,158,11,.08); font:800 10px ui-monospace,monospace; letter-spacing:.16em; }
+.battle-result h2 { position:relative; margin:24px auto 13px; max-width:760px; color:#f8fafc; font:900 clamp(36px,6vw,78px)/.95 ui-sans-serif,system-ui,sans-serif; letter-spacing:-.06em; }
+.battle-result p { position:relative; max-width:680px; margin:0 auto; color:#cbd5e1; font:500 15px/1.7 ui-sans-serif,system-ui,sans-serif; }
+.result-score { position:relative; display:grid; grid-template-columns:1fr 1fr; gap:14px; max-width:720px; margin:28px auto 22px; }
+.result-score span { display:flex; flex-direction:column; gap:9px; padding:18px 16px; border:1px solid rgba(148,163,184,.24); background:rgba(2,6,23,.48); color:#fda4af; font:800 10px ui-monospace,monospace; letter-spacing:.12em; }
+.result-score span:first-child { border-color:rgba(245,158,11,.58); color:#fbbf24; }
+.result-score small { font-size:9px; }
+.result-score strong { color:#f8fafc; font:900 clamp(16px,2.2vw,26px)/1.1 ui-sans-serif,system-ui,sans-serif; letter-spacing:-.025em; }
+.result-score em { color:#94a3b8; font-style:normal; font-size:9px; }
+.result-metrics { position:relative; display:flex; justify-content:center; gap:30px; margin:0 auto 28px; color:#94a3b8; font:700 10px ui-monospace,monospace; letter-spacing:.13em; }
+.result-metrics b { color:#f8fafc; margin-left:5px; }
+.result-radar { position:absolute; top:-130px; left:50%; width:360px; height:360px; transform:translateX(-50%); border:1px solid rgba(248,113,113,.14); border-radius:50%; opacity:.45; pointer-events:none; }
+.result-radar span { position:absolute; inset:18%; border:1px solid rgba(248,113,113,.12); border-radius:50%; }
+.result-radar span:nth-child(2) { inset:36%; }.result-radar span:nth-child(3) { inset:0; border-style:dashed; animation:result-radar-spin 11s linear infinite; }
+@keyframes result-scan { to { transform:translateX(100%); } }
+@keyframes result-radar-spin { to { transform:rotate(360deg); } }
+@media (max-width:640px) { .battle-result { width:calc(100% - 26px); padding:36px 18px 28px; }.result-score { grid-template-columns:1fr; gap:9px; }.result-metrics { flex-wrap:wrap; gap:12px; }.battle-result h2 { font-size:38px; } }
 </style>
 <style>
 /* Wireframe layout revision: left vertical nations rail, right globe and selected-country workspace. */
@@ -2225,6 +2244,8 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
       destroyBattleGlobe();
       const attackerPoint = battleFeaturePoint(attacker);
       const defenderPoint = battleFeaturePoint(defender);
+      const createStrikeArcs = (from, to, reverse = false) => [0, 1, 2, 3].map(index => ({ startLat: from.lat, startLng: from.lng, endLat: to.lat, endLng: to.lng, color: reverse ? ['#fecaca', '#ef4444'] : ['#ef4444', '#fecaca'], arcAlt: 0.16 + index * 0.035, stroke: index === 0 ? 0.9 : 0.5, dashGap: 0.12 + index * 0.025, dashOffset: index * 0.19 }));
+      const strikeArcs = [...createStrikeArcs(attackerPoint, defenderPoint), ...createStrikeArcs(defenderPoint, attackerPoint, true)];
       battleGlobe = Globe()(elem)
         .backgroundColor('rgba(0,0,0,0)')
         .showAtmosphere(true)
@@ -2240,11 +2261,8 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
         ])
         .pointLat('lat').pointLng('lng').pointColor(() => '#ef4444').pointRadius(0.55).pointAltitude(0.035)
         .pointLabel(point => `<div style="padding:5px 8px;border:1px solid #ef4444;background:#270b0b;color:#fff;font:700 11px ui-monospace,monospace">${point.name}</div>`)
-        .arcsData([
-          { startLat: attackerPoint.lat, startLng: attackerPoint.lng, endLat: defenderPoint.lat, endLng: defenderPoint.lng, color: ['#ef4444', '#fecaca'], arcAlt: 0.28, stroke: 0.75 },
-          { startLat: defenderPoint.lat, startLng: defenderPoint.lng, endLat: attackerPoint.lat, endLng: attackerPoint.lng, color: ['#fecaca', '#ef4444'], arcAlt: 0.22, stroke: 0.55 }
-        ])
-        .arcColor('color').arcDashLength(0.42).arcDashGap(0.16).arcDashInitialGap(() => Math.random()).arcDashAnimateTime(2200)
+        .arcsData(strikeArcs)
+        .arcColor('color').arcDashLength(0.48).arcDashGap('dashGap').arcDashInitialGap('dashOffset').arcDashAnimateTime(1450)
         .arcStroke('stroke');
       fetch('https://raw.githubusercontent.com/vasturiano/globe.gl/master/example/datasets/ne_110m_admin_0_countries.geojson')
         .then(response => response.json())
@@ -2252,15 +2270,13 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
           battleGeoFeatures = data.features || [];
           const refreshedAttackerPoint = battleFeaturePoint(attacker);
           const refreshedDefenderPoint = battleFeaturePoint(defender);
+          const refreshedStrikeArcs = [...createStrikeArcs(refreshedAttackerPoint, refreshedDefenderPoint), ...createStrikeArcs(refreshedDefenderPoint, refreshedAttackerPoint, true)];
           battleGlobe.polygonsData(battleGeoFeatures)
             .pointsData([
               { ...refreshedAttackerPoint, id: attacker.id, name: attacker.name, side: 'attacker' },
               { ...refreshedDefenderPoint, id: defender.id, name: defender.name, side: 'defender' }
             ])
-            .arcsData([
-              { startLat: refreshedAttackerPoint.lat, startLng: refreshedAttackerPoint.lng, endLat: refreshedDefenderPoint.lat, endLng: refreshedDefenderPoint.lng, color: ['#ef4444', '#fecaca'], arcAlt: 0.28, stroke: 0.75 },
-              { startLat: refreshedDefenderPoint.lat, startLng: refreshedDefenderPoint.lng, endLat: refreshedAttackerPoint.lat, endLng: refreshedAttackerPoint.lng, color: ['#fecaca', '#ef4444'], arcAlt: 0.22, stroke: 0.55 }
-            ]);
+            .arcsData(refreshedStrikeArcs);
           battleGlobe.pointOfView({ lat: 22, lng: -8, altitude: 2.25 }, 0);
           battleGlobe.controls().autoRotate = false;
           const box = elem.getBoundingClientRect();
@@ -2300,13 +2316,13 @@ main { width:calc(100% - 366px)!important; margin-left:366px; padding:18px 18px 
       window.battleTargetIds = new Set([attacker.id, defender.id]);
       window.lastBattle = { attacker, defender, type };
       document.body.classList.add('conventional-battle');
-      stage.innerHTML = `<div class="battle-topline"><span>CONVENTIONAL WAR / ${type === 'border' ? 'BORDER CONTACT' : 'REMOTE AIR CAMPAIGN'}</span><span>REAL WORLD THEATER / 04 SEC</span></div><div class="battle-world conventional-world"><div id="battleGlobeViz" class="battle-globe-real" aria-label="Gerçek dünya savaş haritası"></div><i class="fa-solid fa-jet-fighter battle-aircraft usa-flight" aria-label="${attacker.name} aircraft"></i><i class="fa-solid fa-jet-fighter battle-aircraft turkey-flight" aria-label="${defender.name} aircraft"></i><span class="battle-route-label">REAL COORDINATES / VISUAL SIMULATION ONLY</span><strong id="battleCountdown" class="battle-countdown">04</strong></div>`;
+      stage.innerHTML = `<div class="battle-topline"><span>CONVENTIONAL WAR / ${type === 'border' ? 'BORDER CONTACT' : 'REMOTE AIR CAMPAIGN'}</span><span>REAL WORLD THEATER / 10 SEC</span></div><div class="battle-world conventional-world"><div id="battleGlobeViz" class="battle-globe-real" aria-label="Gerçek dünya savaş haritası"></div><i class="fa-solid fa-jet-fighter battle-aircraft usa-flight" aria-label="${attacker.name} aircraft"></i><i class="fa-solid fa-jet-fighter battle-aircraft turkey-flight" aria-label="${defender.name} aircraft"></i><span class="battle-route-label">REAL COORDINATES / VISUAL SIMULATION ONLY</span><strong id="battleCountdown" class="battle-countdown">10</strong></div>`;
       requestAnimationFrame(() => initBattleGlobe(attacker, defender));
-      overlay.classList.add('is-open'); overlay.setAttribute('aria-hidden','false'); let seconds = 4; const countdown = document.getElementById('battleCountdown'); clearInterval(tacticalTimer); tacticalTimer = window.setInterval(() => { seconds -= 1; if (countdown) countdown.textContent = seconds > 0 ? `0${seconds}` : ''; if (seconds <= 0) { clearInterval(tacticalTimer); showTacticalResult(attacker, defender, type); } }, 1000);
+      overlay.classList.add('is-open'); overlay.setAttribute('aria-hidden','false'); let seconds = 10; const countdown = document.getElementById('battleCountdown'); clearInterval(tacticalTimer); tacticalTimer = window.setInterval(() => { seconds -= 1; if (countdown) countdown.textContent = seconds > 0 ? String(seconds).padStart(2, '0') : ''; if (seconds <= 0) { clearInterval(tacticalTimer); showTacticalResult(attacker, defender, type); } }, 1000);
     }
     function showTacticalResult(attacker, defender, type) {
       destroyBattleGlobe();
-      const aScore = typeof calculateForceScore === 'function' ? calculateForceScore(attacker).total : Math.max(1, 100 - attacker.rank); const dScore = typeof calculateForceScore === 'function' ? calculateForceScore(defender).total : Math.max(1, 100 - defender.rank); const modifier = type === 'remote' ? 1.08 : 1; const winner = aScore * modifier >= dScore ? attacker : defender; const loser = winner.id === attacker.id ? defender : attacker; const stage = document.getElementById('battleStage'); stage.innerHTML = `<div class="battle-result"><span class="battle-kicker">SIMULATION COMPLETE / OUTCOME</span><h2>${winner.name} prevails.</h2><p>${type === 'remote' ? 'Uzaktan savaş senaryosunda menzil ve hava savunma dengesi' : 'Sınır taarruzu senaryosunda kuvvet yoğunluğu ve yıpratma dengesi'} ${winner.name} lehine sonuçlandı. Bu sonuç görsel ve eğitsel bir simülasyondur.</p><div class="result-score"><span>WINNER<strong>${winner.name}</strong></span><span>DEFEATED<strong>${loser.name}</strong></span></div><button class="sim-btn primary" onclick="showBattleComparison()">OPEN COMPARISON</button></div>`;
+      const aScore = typeof calculateForceScore === 'function' ? calculateForceScore(attacker).total : Math.max(1, 100 - attacker.rank); const dScore = typeof calculateForceScore === 'function' ? calculateForceScore(defender).total : Math.max(1, 100 - defender.rank); const modifier = type === 'remote' ? 1.08 : 1; const winner = aScore * modifier >= dScore ? attacker : defender; const loser = winner.id === attacker.id ? defender : attacker; const stage = document.getElementById('battleStage'); stage.innerHTML = `<div class="battle-result"><div class="result-radar"><span></span><span></span><span></span></div><span class="battle-kicker">SIMULATION COMPLETE / OUTCOME</span><h2>${winner.name} prevails.</h2><p>${type === 'remote' ? 'Uzaktan savaş senaryosunda menzil ve hava savunma dengesi' : 'Sınır taarruzu senaryosunda kuvvet yoğunluğu ve yıpratma dengesi'} ${winner.name} lehine sonuçlandı.</p><div class="result-score"><span><small>WINNER / FORCE A</small><strong>${winner.name}</strong><em>INDEX ${Math.round(aScore)}</em></span><span><small>DEFEATED / FORCE B</small><strong>${loser.name}</strong><em>INDEX ${Math.round(dScore)}</em></span></div><div class="result-metrics"><span>DURATION <b>10 SEC</b></span><span>THEATER <b>REAL WORLD</b></span><span>STATUS <b>RESOLVED</b></span></div><button class="sim-btn primary" onclick="showBattleComparison()">OPEN COMPARISON</button></div>`;
     }
     function showBattleComparison() {
       const battle = window.lastBattle;

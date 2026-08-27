@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e4194b29-a866-4844-8f00-a813aec099a4" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/googled03dedb65adf5971 (1).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/googled03dedb65adf5971 (2).html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/militaryy-inventory/src/main/resources/static/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/militaryy-inventory/src/main/resources/static/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/Main.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/controller/CountryController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/AirDefense.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/AirForces.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/Country.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/LandForces.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/model/NavalForces.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/service/CountryService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/data/countries.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/app.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/index.html" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/static/style.css" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/pom.xml" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/main/resources/static/app.js" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/src/main/resources/static/index.html" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0015010481055904" />
+      <entry key="MS500" value="1.4440293438319944" />
+      <entry key="S2" value="6.16701599313911" />
+      <entry key="S5" value="13.690499877437881" />
+      <entry key="S10" value="20.255736011971248" />
+      <entry key="S30" value="29.659136846412927" />
+      <entry key="S60" value="34.26171745584958" />
+      <entry key="M2" value="38.89114947245574" />
+      <entry key="M5" value="54.01893209713907" />
+      <entry key="M10" value="79.32833374299958" />
+      <entry key="M15" value="99.71431635120038" />
+      <entry key="M30" value="149.8909250323421" />
+      <entry key="H1" value="238.12167425635468" />
+      <entry key="H2" value="352.48655378914367" />
+      <entry key="H4" value="452.739444972628" />
+      <entry key="D1" value="574.1692363040173" />
+      <entry key="W1" value="599.6076928262194" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="7.08208866113542E-132" />
+      <entry key="S5" value="5.180245488526539E-53" />
+      <entry key="S10" value="1.0153290460197618E-26" />
+      <entry key="S30" value="3.435424462559043E-9" />
+      <entry key="S60" value="8.288480788989008E-5" />
+      <entry key="M2" value="0.012874930648794485" />
+      <entry key="M5" value="0.26577500843117535" />
+      <entry key="M10" value="0.7290742595269553" />
+      <entry key="M15" value="1.0206051957115299" />
+      <entry key="M30" value="1.428709233984112" />
+      <entry key="H1" value="1.690390001545752" />
+      <entry key="H2" value="1.8386897428235733" />
+      <entry key="H4" value="1.917649466599055" />
+      <entry key="D1" value="1.9860333346137173" />
+      <entry key="W1" value="1.9979987646737796" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.017100042067386564" />
+      <entry key="MS500" value="0.680977625409481" />
+      <entry key="S2" value="5.75798820841663" />
+      <entry key="S5" value="13.48387691491335" />
+      <entry key="S10" value="20.141232208929615" />
+      <entry key="S30" value="29.61707565095028" />
+      <entry key="S60" value="34.239917966507456" />
+      <entry key="M2" value="38.89210957863383" />
+      <entry key="M5" value="54.277413303069814" />
+      <entry key="M10" value="80.05153661696401" />
+      <entry key="M15" value="100.72987060185105" />
+      <entry key="M30" value="151.31583141539164" />
+      <entry key="H1" value="239.80910653917798" />
+      <entry key="H2" value="354.3230780807603" />
+      <entry key="H4" value="454.65570771147543" />
+      <entry key="D1" value="576.1549766531606" />
+      <entry key="W1" value="601.6056478764771" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 4,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3IHAG9lbQqPnvaRDzHIXIYd4rr0" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.Main.executor": "Run",
+    "Maven.militaryy-inventory [package].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "Spring Boot.Main.executor": "Run",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "onboarding.tips.debug.path": "C:/Users/alima/Desktop/militaryy-inventory/src/main/java/org/example/Main.java",
+    "to.speed.mode.migration.done": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+      <option name="FRAME_DEACTIVATION_UPDATE_POLICY" value="UnknownPolicyInFreeMode" />
+      <module name="militaryy-inventory" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="Main" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Spring Boot.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-30f59d01ecdd-63390994e64e-intellij.indexing.shared.core-IU-262.8665.258" />
+        <option value="bundled-js-predefined-d6986cc7102b-4abd2a77f808-JavaScript-IU-262.8665.258" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e4194b29-a866-4844-8f00-a813aec099a4" name="Changes" comment="" />
+      <created>1787411022509</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1787411022509</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/Main.java</url>
+          <line>15</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>
